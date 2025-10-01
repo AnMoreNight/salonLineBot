@@ -38,20 +38,40 @@ class ReservationFlow:
         
         return slots
     
-    def detect_intent(self, message: str) -> str:
-        """Detect user intent from message"""
+    def detect_intent(self, message: str, user_id: str = None) -> str:
+        """Detect user intent from message with context awareness"""
         message_lower = message.lower()
         
-        # Reservation intent keywords
+        # Check if user is in reservation flow
+        if user_id and user_id in self.user_states:
+            state = self.user_states[user_id]
+            step = state["step"]
+            
+            # During service selection step, service keywords mean service selection
+            if step == "service_selection":
+                service_keywords = ["カット", "カラー", "パーマ", "トリートメント"]
+                if any(keyword in message_lower for keyword in service_keywords):
+                    return "service_selection"
+            
+            # During other reservation steps, treat as reservation flow
+            if step in ["date_selection", "time_selection", "confirmation"]:
+                return "reservation_flow"
+        
+        # Reservation intent keywords (only when not in flow)
         reservation_keywords = [
             "予約", "予約したい", "予約お願い", "予約できますか",
             "空いてる", "空き", "時間", "いつ", "可能"
         ]
         
-        # Service intent keywords
-        service_keywords = [
-            "カット", "カラー", "パーマ", "トリートメント",
-            "髪", "美容", "スタイル"
+        # Service inquiry keywords (asking about services, not selecting)
+        service_inquiry_keywords = [
+            "カットについて", "カラーの料金", "パーマの効果", "トリートメントの効果",
+            "どんなサービス", "サービスについて", "髪型の相談", "美容の相談"
+        ]
+        
+        # Service selection keywords (direct service names)
+        service_selection_keywords = [
+            "カット", "カラー", "パーマ", "トリートメント"
         ]
         
         # Cancel intent keywords
@@ -59,10 +79,13 @@ class ReservationFlow:
             "キャンセル", "取り消し", "予約変更", "変更"
         ]
         
+        # Priority order: reservation > service_inquiry > service_selection > cancel
         if any(keyword in message_lower for keyword in reservation_keywords):
             return "reservation"
-        elif any(keyword in message_lower for keyword in service_keywords):
+        elif any(keyword in message_lower for keyword in service_inquiry_keywords):
             return "service_inquiry"
+        elif any(keyword in message_lower for keyword in service_selection_keywords):
+            return "service_selection"
         elif any(keyword in message_lower for keyword in cancel_keywords):
             return "cancel"
         else:
@@ -105,8 +128,22 @@ class ReservationFlow:
     def _handle_service_selection(self, user_id: str, message: str) -> str:
         """Handle service selection"""
         selected_service = None
-        for service_name in self.services.keys():
-            if service_name in message:
+        message_lower = message.lower()
+        
+        # More flexible service matching
+        service_mapping = {
+            "カット": "カット",
+            "カラー": "カラー", 
+            "パーマ": "パーマ",
+            "トリートメント": "トリートメント",
+            "cut": "カット",
+            "color": "カラー",
+            "perm": "パーマ",
+            "treatment": "トリートメント"
+        }
+        
+        for keyword, service_name in service_mapping.items():
+            if keyword in message_lower:
                 selected_service = service_name
                 break
         
@@ -210,12 +247,17 @@ class ReservationFlow:
     
     def get_response(self, user_id: str, message: str) -> str:
         """Main entry point for reservation flow"""
-        intent = self.detect_intent(message)
+        intent = self.detect_intent(message, user_id)
         
         if intent == "reservation":
             return self.handle_reservation_flow(user_id, message)
+        elif intent == "reservation_flow":
+            return self.handle_reservation_flow(user_id, message)
         elif intent == "service_inquiry":
             return "サービスについてのご質問ですね。どのサービスについてお聞きになりたいですか？"
+        elif intent == "service_selection":
+            # This should only happen during reservation flow
+            return self.handle_reservation_flow(user_id, message)
         elif intent == "cancel":
             return "予約のキャンセルについてですね。お電話でお問い合わせください。"
         else:
