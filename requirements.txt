@@ -2,3 +2,6 @@ fastapi
 line-bot-sdk
 python-dotenv
 mangum
+openai
+scikit-learn
+numpy

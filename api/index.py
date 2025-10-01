@@ -7,6 +7,9 @@ from linebot.v3.exceptions import InvalidSignatureError
 from linebot.v3.messaging import Configuration, ApiClient, MessagingApi, ReplyMessageRequest, TextMessage
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 from mangum import Mangum
+from api.rag_faq import RAGFAQ
+from api.chatgpt_faq import ChatGPTFAQ
+from api.reservation_flow import ReservationFlow
 
 load_dotenv()
 
@@ -18,6 +21,11 @@ if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_CHANNEL_SECRET:
 
 configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+# Initialize AI modules
+rag_faq = RAGFAQ()
+chatgpt_faq = ChatGPTFAQ()
+reservation_flow = ReservationFlow()
 
 app = FastAPI()
 handler_lambda = Mangum(app)
@@ -44,11 +52,24 @@ async def callback(request: Request, x_line_signature: str = Header(None)):
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event: MessageEvent):
     message_text = event.message.text.strip()
+    user_id = event.source.user_id
 
+    # Special ping-pong test
     if message_text == "ping":
         reply = "pong"
     else:
-        reply = "Send 'ping' to get 'pong' response"
+        # 1. Try reservation flow first (highest priority)
+        reservation_reply = reservation_flow.get_response(user_id, message_text)
+        if reservation_reply:
+            reply = reservation_reply
+        else:
+            # 2. Try RAG-FAQ (KB-based, most accurate)
+            rag_reply = rag_faq.get_response(message_text)
+            if rag_reply and "分かりません" not in rag_reply:
+                reply = rag_reply
+            else:
+                # 3. Fallback to ChatGPT for natural language responses
+                reply = chatgpt_faq.get_response(message_text)
 
     # Reply
     try:

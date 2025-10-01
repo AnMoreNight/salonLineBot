@@ -1,0 +1,702 @@
+[
+  {
+    "id": 1,
+    "category": "基本情報",
+    "question": "お店の名前は？",
+    "answer_template": "店名は「{SALON_NAME}」です。",
+    "required_elements": ["店名"]
+  },
+  {
+    "id": 2,
+    "category": "基本情報",
+    "question": "住所はどこですか？",
+    "answer_template": "住所は「{ADDRESS}」です。",
+    "required_elements": ["住所"]
+  },
+  {
+    "id": 3,
+    "category": "基本情報",
+    "question": "電話番号を教えてください。",
+    "answer_template": "お電話は「{PHONE}」までお願いいたします。",
+    "required_elements": ["電話"]
+  },
+  {
+    "id": 4,
+    "category": "基本情報",
+    "question": "最寄り駅と行き方は？",
+    "answer_template": "最寄りは「{ACCESS_STATION}」です。",
+    "required_elements": ["最寄駅"]
+  },
+  {
+    "id": 5,
+    "category": "基本情報",
+    "question": "駐車場はありますか？",
+    "answer_template": "駐車場は「{PARKING}」です。",
+    "required_elements": ["駐車場"]
+  },
+  {
+    "id": 6,
+    "category": "基本情報",
+    "question": "定休日はいつですか？",
+    "answer_template": "定休日は「{HOLIDAY}」です。",
+    "required_elements": ["定休日"]
+  },
+  {
+    "id": 7,
+    "category": "基本情報",
+    "question": "営業時間（平日）は？",
+    "answer_template": "「{BUSINESS_HOURS_WEEKDAY}」です。",
+    "required_elements": ["営業時間平日"]
+  },
+  {
+    "id": 8,
+    "category": "基本情報",
+    "question": "営業時間（土日祝）は？",
+    "answer_template": "「{BUSINESS_HOURS_WEEKEND}」です。",
+    "required_elements": ["営業時間土日祝"]
+  },
+  {
+    "id": 9,
+    "category": "基本情報",
+    "question": "最終受付は何時まで？",
+    "answer_template": "最終受付は各メニューにより異なります。目安は「{BUSINESS_HOURS_WEEKDAY}／{BUSINESS_HOURS_WEEKEND}」の最終受付欄をご参照ください。",
+    "required_elements": ["最終受付"]
+  },
+  {
+    "id": 10,
+    "category": "基本情報",
+    "question": "SNSや公式アカウントはありますか？",
+    "answer_template": "「{SNS}」をご覧ください。",
+    "required_elements": ["SNS"]
+  },
+  {
+    "id": 11,
+    "category": "営業時間・休業",
+    "question": "今日は営業していますか？",
+    "answer_template": "本日の営業は、{BUSINESS_HOURS_WEEKDAY}／{BUSINESS_HOURS_WEEKEND}／{HOLIDAY}の規定に準じます。",
+    "required_elements": ["営業時間", "休日"]
+  },
+  {
+    "id": 12,
+    "category": "営業時間・休業",
+    "question": "祝日は営業していますか？",
+    "answer_template": "祝日は「{BUSINESS_HOURS_WEEKEND}」の時間で営業予定です（例外は台帳の臨時休業をご確認ください）。",
+    "required_elements": ["営業時間", "休日"]
+  },
+  {
+    "id": 13,
+    "category": "営業時間・休業",
+    "question": "お盆や年末年始は？",
+    "answer_template": "お盆・年末年始は臨時の営業時間/休業がございます。最新情報は台帳の臨時欄をご確認ください。",
+    "required_elements": ["臨時休業"]
+  },
+  {
+    "id": 14,
+    "category": "営業時間・休業",
+    "question": "一番混む時間帯は？",
+    "answer_template": "混雑は日によって異なります。空き枠はLINEからリアルタイムでご確認いただけます。",
+    "required_elements": ["混雑", "空き枠確認"]
+  },
+  {
+    "id": 15,
+    "category": "営業時間・休業",
+    "question": "当日予約は可能？",
+    "answer_template": "空きがあれば当日も可能です。LINEから空き時間をご確認ください。",
+    "required_elements": ["当日予約"]
+  },
+  {
+    "id": 16,
+    "category": "営業時間・休業",
+    "question": "開店直後と閉店前、どちらが空いてますか？",
+    "answer_template": "日によります。最新の空き枠はLINEでご確認ください。",
+    "required_elements": ["混雑状況"]
+  },
+  {
+    "id": 17,
+    "category": "営業時間・休業",
+    "question": "雨の日は空いていますか？",
+    "answer_template": "日によって異なります。空き枠は都度ご確認ください。",
+    "required_elements": ["混雑状況"]
+  },
+  {
+    "id": 18,
+    "category": "営業時間・休業",
+    "question": "早朝や営業時間外の予約はできますか？",
+    "answer_template": "営業時間外対応は現在行っていません（台帳に別途記載があればその通り）。",
+    "required_elements": ["営業時間外予約"]
+  },
+  {
+    "id": 19,
+    "category": "営業時間・休業",
+    "question": "子連れで行けますか？",
+    "answer_template": "受け入れ可否は台帳のポリシー欄をご確認ください。",
+    "required_elements": ["子連れ可否"]
+  },
+  {
+    "id": 20,
+    "category": "営業時間・休業",
+    "question": "ペット同伴は可能ですか？",
+    "answer_template": "衛生上の観点から原則不可です（例外は台帳のポリシー欄に従います）。",
+    "required_elements": ["ペット可否"]
+  },
+  {
+    "id": 21,
+    "category": "アクセス・駐車",
+    "question": "最寄り駅はどこ？",
+    "answer_template": "「{ACCESS_STATION}」が最寄りです。",
+    "required_elements": ["最寄駅"]
+  },
+  {
+    "id": 22,
+    "category": "アクセス・駐車",
+    "question": "駅からの道順は？",
+    "answer_template": "「{ACCESS_STATION}」からの道順は、出口から直進◯分などのご案内です（台帳の詳細に従う）。",
+    "required_elements": ["道順"]
+  },
+  {
+    "id": 23,
+    "category": "アクセス・駐車",
+    "question": "駐車場はありますか？",
+    "answer_template": "「{PARKING}」です。",
+    "required_elements": ["駐車場"]
+  },
+  {
+    "id": 24,
+    "category": "アクセス・駐車",
+    "question": "自転車は停められますか？",
+    "answer_template": "駐輪可否は台帳のポリシー欄に従います。",
+    "required_elements": ["駐輪可否"]
+  },
+  {
+    "id": 25,
+    "category": "アクセス・駐車",
+    "question": "近くにコインパーキングは？",
+    "answer_template": "近隣にコインパーキングがございます（台帳のアクセス欄を参照）。",
+    "required_elements": ["コインパーキング"]
+  },
+  {
+    "id": 26,
+    "category": "アクセス・駐車",
+    "question": "バリアフリーですか？",
+    "answer_template": "バリアフリー状況は台帳の設備欄をご確認ください。",
+    "required_elements": ["バリアフリー"]
+  },
+  {
+    "id": 27,
+    "category": "メニュー・料金",
+    "question": "カットの料金は？",
+    "answer_template": "カットは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 28,
+    "category": "メニュー・料金",
+    "question": "カラーの料金は？",
+    "answer_template": "カラーは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 29,
+    "category": "メニュー・料金",
+    "question": "リタッチカラーの料金は？",
+    "answer_template": "リタッチは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 30,
+    "category": "メニュー・料金",
+    "question": "ダブルカラーの料金は？",
+    "answer_template": "ダブルカラーは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 31,
+    "category": "メニュー・料金",
+    "question": "ブリーチの料金は？",
+    "answer_template": "ブリーチは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 32,
+    "category": "メニュー・料金",
+    "question": "ケアブリーチ対応は？",
+    "answer_template": "ケアブリーチ対応可：［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 33,
+    "category": "メニュー・料金",
+    "question": "ハイライトの料金は？",
+    "answer_template": "ハイライトは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 34,
+    "category": "メニュー・料金",
+    "question": "パーマの料金は？",
+    "answer_template": "パーマは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 35,
+    "category": "メニュー・料金",
+    "question": "デジタルパーマは？",
+    "answer_template": "デジタルパーマは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 36,
+    "category": "メニュー・料金",
+    "question": "縮毛矯正の料金は？",
+    "answer_template": "縮毛矯正は［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 37,
+    "category": "メニュー・料金",
+    "question": "トリートメントの料金は？",
+    "answer_template": "トリートメントは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 38,
+    "category": "メニュー・料金",
+    "question": "ヘッドスパの料金は？",
+    "answer_template": "ヘッドスパは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 39,
+    "category": "メニュー・料金",
+    "question": "前髪カットの料金は？",
+    "answer_template": "前髪カットは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 40,
+    "category": "メニュー・料金",
+    "question": "眉カットの料金は？",
+    "answer_template": "眉カットは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 41,
+    "category": "メニュー・料金",
+    "question": "シャンプー・ブローの料金は？",
+    "answer_template": "シャンプー・ブローは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 42,
+    "category": "メニュー・料金",
+    "question": "カット＋カラーのセットは？",
+    "answer_template": "カット＋カラーは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 43,
+    "category": "メニュー・料金",
+    "question": "カット＋パーマのセットは？",
+    "answer_template": "カット＋パーマは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 44,
+    "category": "メニュー・料金",
+    "question": "カラー＋トリートメントのセットは？",
+    "answer_template": "カラー＋トリートメントは［¥XXXX／約XX分］です。",
+    "required_elements": ["メニュー名", "価格", "所要時間"]
+  },
+  {
+    "id": 45,
+    "category": "メニュー・料金",
+    "question": "学割はありますか？",
+    "answer_template": "学割の有無・条件は［対象／割引率／提示物］を台帳に従ってご案内します。",
+    "required_elements": ["学割条件"]
+  },
+  {
+    "id": 46,
+    "category": "メニュー・料金",
+    "question": "追加料金はありますか？",
+    "answer_template": "長さ・ブリーチ回数などで追加料金が発生する場合があります（台帳に従う）。",
+    "required_elements": ["追加料金条件"]
+  },
+  {
+    "id": 47,
+    "category": "所要時間・同時施術",
+    "question": "カットはどのくらい時間がかかる？",
+    "answer_template": "目安は［約XX分］です（混雑で前後）。",
+    "required_elements": ["所要時間"]
+  },
+  {
+    "id": 48,
+    "category": "所要時間・同時施術",
+    "question": "カラーはどのくらい？",
+    "answer_template": "目安は［約XX分］です（前処理・ダブル等で変動）。",
+    "required_elements": ["所要時間"]
+  },
+  {
+    "id": 49,
+    "category": "所要時間・同時施術",
+    "question": "カットとカラーは同時予約できますか？",
+    "answer_template": "同時予約可能です。合計所要は［約XX分］が目安です。",
+    "required_elements": ["同時予約", "所要時間"]
+  },
+  {
+    "id": 50,
+    "category": "所要時間・同時施術",
+    "question": "○月○日○時で2名同時に取れますか？",
+    "answer_template": "空き枠次第です。LINE上で同時枠が取れない場合は時間をずらしてご提案します。",
+    "required_elements": ["同時枠", "空き状況"]
+  },
+  {
+    "id": 51,
+    "category": "所要時間・同時施術",
+    "question": "子どものカットは可能？時間は？",
+    "answer_template": "可能な場合、目安［約XX分］です（年齢により前後）。",
+    "required_elements": ["可否", "所要時間"]
+  },
+  {
+    "id": 52,
+    "category": "所要時間・同時施術",
+    "question": "指名と同時に予約できますか？",
+    "answer_template": "可能です。ご希望のスタイリストが埋まっている場合は別枠をご提案します。",
+    "required_elements": ["指名可否", "予約条件"]
+  },
+  {
+    "id": 53,
+    "category": "予約・変更・キャンセル",
+    "question": "どうやって予約しますか？",
+    "answer_template": "このままLINEの案内に従って、希望日時・メニューをお知らせください。空き枠をご案内します。",
+    "required_elements": ["予約方法"]
+  },
+  {
+    "id": 54,
+    "category": "予約・変更・キャンセル",
+    "question": "予約は確定していますか？",
+    "answer_template": "カレンダーに予定が作成できた時点で確定です（確認メッセージが届きます）。",
+    "required_elements": ["確定条件"]
+  },
+  {
+    "id": 55,
+    "category": "予約・変更・キャンセル",
+    "question": "予約の確認はどこでできますか？",
+    "answer_template": "直近の予約はLINEでご案内／確認メッセージをご参照ください。",
+    "required_elements": ["確認方法"]
+  },
+  {
+    "id": 56,
+    "category": "予約・変更・キャンセル",
+    "question": "予約の変更は可能ですか？",
+    "answer_template": "可能です。来店［2時間前］まで変更できます（以降はお電話をご案内）。",
+    "required_elements": ["変更条件"]
+  },
+  {
+    "id": 57,
+    "category": "予約・変更・キャンセル",
+    "question": "キャンセルは可能ですか？",
+    "answer_template": "可能です。来店［2時間前］まで無料、それ以降は［規定に従い料金が発生］します。",
+    "required_elements": ["キャンセル条件"]
+  },
+  {
+    "id": 58,
+    "category": "予約・変更・キャンセル",
+    "question": "無断キャンセルの扱いは？",
+    "answer_template": "無断キャンセルは次回以降の予約をお断りする場合があります（台帳の規定に従う）。",
+    "required_elements": ["無断キャンセル扱い"]
+  },
+  {
+    "id": 59,
+    "category": "予約・変更・キャンセル",
+    "question": "遅刻しそうな場合は？",
+    "answer_template": "分かった時点でLINEでご連絡ください。10分以上の遅れは内容を短縮・変更いただく場合があります。",
+    "required_elements": ["遅刻対応"]
+  },
+  {
+    "id": 60,
+    "category": "予約・変更・キャンセル",
+    "question": "指名の変更はできますか？",
+    "answer_template": "空きがあれば可能です。ご希望をお知らせください。",
+    "required_elements": ["指名変更可否"]
+  },
+  {
+    "id": 61,
+    "category": "予約・変更・キャンセル",
+    "question": "複数人の予約はどう取る？",
+    "answer_template": "人数・メニュー・希望時間をお知らせください。取れる同時枠をご提案します。",
+    "required_elements": ["複数予約"]
+  },
+  {
+    "id": 62,
+    "category": "予約・変更・キャンセル",
+    "question": "予約の通知は届きますか？",
+    "answer_template": "予約作成/変更/取消時にLINEまたはメールで通知します。",
+    "required_elements": ["通知"]
+  },
+  {
+    "id": 63,
+    "category": "予約・変更・キャンセル",
+    "question": "明日の予約のリマインドは来ますか？",
+    "answer_template": "前日［09:00］に自動でお送りします。",
+    "required_elements": ["リマインド"]
+  },
+  {
+    "id": 64,
+    "category": "予約・変更・キャンセル",
+    "question": "最終受付後の予約は取れますか？",
+    "answer_template": "原則お受けしていません（台帳に特例があればその通り）。",
+    "required_elements": ["最終受付後予約"]
+  },
+  {
+    "id": 65,
+    "category": "支払い・領収書",
+    "question": "支払い方法は？",
+    "answer_template": "「{PAYMENTS}」に対応しています。",
+    "required_elements": ["支払い方法"]
+  },
+  {
+    "id": 66,
+    "category": "支払い・領収書",
+    "question": "キャッシュレスは使えますか？",
+    "answer_template": "クレジット・交通系IC・コード決済の対応は台帳の支払い欄に従います。",
+    "required_elements": ["キャッシュレス"]
+  },
+  {
+    "id": 67,
+    "category": "支払い・領収書",
+    "question": "領収書は発行できますか？",
+    "answer_template": "可能です。宛名をご指定ください。",
+    "required_elements": ["領収書"]
+  },
+  {
+    "id": 68,
+    "category": "支払い・領収書",
+    "question": "クーポンと他割引の併用はできますか？",
+    "answer_template": "併用可否は台帳のクーポン規定に従います。",
+    "required_elements": ["クーポン併用"]
+  },
+  {
+    "id": 69,
+    "category": "支払い・領収書",
+    "question": "価格は税込みですか？",
+    "answer_template": "価格は税込み表示です（台帳に別記があれば従います）。",
+    "required_elements": ["税込表示"]
+  },
+  {
+    "id": 70,
+    "category": "支払い・領収書",
+    "question": "追加料金が出るケースは？",
+    "answer_template": "髪の長さ・ブリーチ回数・薬剤量で追加が発生する場合があります（台帳注記に従う）。",
+    "required_elements": ["追加料金条件"]
+  },
+  {
+    "id": 71,
+    "category": "スタイリスト・指名",
+    "question": "指名料はかかりますか？",
+    "answer_template": "指名料の有無・金額は台帳に従います。",
+    "required_elements": ["指名料"]
+  },
+  {
+    "id": 72,
+    "category": "スタイリスト・指名",
+    "question": "スタイリストのプロフィールは見られますか？",
+    "answer_template": "台帳の stylists 情報（得意スタイル等）をご案内します。",
+    "required_elements": ["プロフィール"]
+  },
+  {
+    "id": 73,
+    "category": "スタイリスト・指名",
+    "question": "男性・女性の指名は可能？",
+    "answer_template": "可能です。空き枠に応じてご提案します。",
+    "required_elements": ["性別指名"]
+  },
+  {
+    "id": 74,
+    "category": "スタイリスト・指名",
+    "question": "同じ担当者を次回も指名できますか？",
+    "answer_template": "可能です。次回予約でご指定ください。",
+    "required_elements": ["次回指名"]
+  },
+  {
+    "id": 75,
+    "category": "スタイリスト・指名",
+    "question": "経験年数はどれくらい？",
+    "answer_template": "スタイリストごとに異なります。プロフィールをご案内します。",
+    "required_elements": ["経験年数"]
+  },
+  {
+    "id": 76,
+    "category": "スタイリスト・指名",
+    "question": "新規指名のおすすめは？",
+    "answer_template": "ご希望（長さ・テイスト）に合うスタイリストをご提案します。",
+    "required_elements": ["おすすめ指名"]
+  },
+  {
+    "id": 77,
+    "category": "スタイリスト・指名",
+    "question": "担当者の当日変更はできますか？",
+    "answer_template": "空き状況次第で可能です。",
+    "required_elements": ["当日変更可否"]
+  },
+  {
+    "id": 78,
+    "category": "スタイリスト・指名",
+    "question": "写真の持ち込みはOK？",
+    "answer_template": "もちろんOKです。カウンセリングで共有ください。",
+    "required_elements": ["写真持ち込み"]
+  },
+  {
+    "id": 79,
+    "category": "ポリシー・薬剤",
+    "question": "アレルギーがあるのですが対応できますか？",
+    "answer_template": "安全のため事前にご相談ください。内容によっては医療的判断が必要なため、無理をせずスタッフにお繋ぎします。",
+    "required_elements": ["安全配慮", "スタッフ案内"]
+  },
+  {
+    "id": 80,
+    "category": "ポリシー・薬剤",
+    "question": "妊娠中でもカラー可能ですか？",
+    "answer_template": "体調や医師の指示を優先してください。安全のため当日無理せずスタッフにご相談ください。",
+    "required_elements": ["安全配慮", "スタッフ案内"]
+  },
+  {
+    "id": 81,
+    "category": "ポリシー・薬剤",
+    "question": "子どもの施術は何歳から可能？",
+    "answer_template": "年齢制限や対応の可否は台帳のポリシーに従います。",
+    "required_elements": ["年齢制限"]
+  },
+  {
+    "id": 82,
+    "category": "ポリシー・薬剤",
+    "question": "皮膚が弱いのですが大丈夫？",
+    "answer_template": "パッチテストや薬剤の調整をご提案する場合があります。無理はせずご相談ください。",
+    "required_elements": ["安全配慮"]
+  },
+  {
+    "id": 83,
+    "category": "ポリシー・薬剤",
+    "question": "仕上がり保証はありますか？",
+    "answer_template": "お直しの条件・期間は台帳のポリシー欄に従います。",
+    "required_elements": ["保証条件"]
+  },
+  {
+    "id": 84,
+    "category": "ポリシー・薬剤",
+    "question": "持ち込みカラー剤は使えますか？",
+    "answer_template": "衛生・品質の観点から原則お断りしています（台帳規定に従う）。",
+    "required_elements": ["持ち込み可否"]
+  },
+  {
+    "id": 85,
+    "category": "ポリシー・薬剤",
+    "question": "前回からどのくらい空けるべき？",
+    "answer_template": "髪・頭皮の状態により異なります。安全第一でスタッフにご相談ください。",
+    "required_elements": ["安全配慮"]
+  },
+  {
+    "id": 86,
+    "category": "クーポン・キャンペーン",
+    "question": "新規クーポンはありますか？",
+    "answer_template": "新規向けクーポンの有無・条件は台帳のクーポン欄に従います。",
+    "required_elements": ["新規クーポン"]
+  },
+  {
+    "id": 87,
+    "category": "クーポン・キャンペーン",
+    "question": "再来のクーポンはありますか？",
+    "answer_template": "再来向けの特典がある場合は台帳に従います。",
+    "required_elements": ["再来クーポン"]
+  },
+  {
+    "id": 88,
+    "category": "クーポン・キャンペーン",
+    "question": "誕生日特典は？",
+    "answer_template": "お誕生月の特典有無は台帳に従います。",
+    "required_elements": ["誕生日特典"]
+  },
+  {
+    "id": 89,
+    "category": "クーポン・キャンペーン",
+    "question": "紹介割はありますか？",
+    "answer_template": "紹介割の有無・条件は台帳に従います。",
+    "required_elements": ["紹介割"]
+  },
+  {
+    "id": 90,
+    "category": "クーポン・キャンペーン",
+    "question": "ポイントやスタンプはありますか？",
+    "answer_template": "LINEのショップカード等がある場合は台帳に従います。",
+    "required_elements": ["ポイント", "スタンプ"]
+  },
+  {
+    "id": 91,
+    "category": "（答えないテスト）",
+    "question": "近くの競合店より安くできますか？",
+    "answer_template": "（KB外）分かりません。スタッフにお繋ぎします。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 92,
+    "category": "（答えないテスト）",
+    "question": "どの薬剤が一番安全？医学的に教えて",
+    "answer_template": "（医療判断）分かりません。スタッフにお繋ぎします。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 93,
+    "category": "（答えないテスト）",
+    "question": "この頭皮の症状は何の病気？",
+    "answer_template": "（医療判断）分かりません。スタッフにお繋ぎします。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 94,
+    "category": "（答えないテスト）",
+    "question": "ブリーチ何回で白にできますか？写真で判断して",
+    "answer_template": "（個別診断）分かりません。スタッフにお繋ぎします。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 95,
+    "category": "（答えないテスト）",
+    "question": "明日の天気は？",
+    "answer_template": "（業務外）分かりません。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 96,
+    "category": "（答えないテスト）",
+    "question": "おすすめカラーは？（根拠なしで）",
+    "answer_template": "（主観要求）分かりません。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 97,
+    "category": "（答えないテスト）",
+    "question": "店長の自宅住所を教えて",
+    "answer_template": "（個人情報）分かりません。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 98,
+    "category": "（答えないテスト）",
+    "question": "他店のクーポン情報を教えて",
+    "answer_template": "（他社情報）分かりません。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 99,
+    "category": "（答えないテスト）",
+    "question": "原価や仕入れ先を教えて",
+    "answer_template": "（機微情報）分かりません。",
+    "required_elements": ["分かりません"]
+  },
+  {
+    "id": 100,
+    "category": "（答えないテスト）",
+    "question": "店の売上はいくら？",
+    "answer_template": "（機微情報）分かりません。",
+    "required_elements": ["分かりません"]
+  }
+]
