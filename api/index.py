@@ -1,0 +1,64 @@
+import os
+import logging
+from fastapi import FastAPI, Request, Header, HTTPException
+from dotenv import load_dotenv
+from linebot.v3 import WebhookHandler
+from linebot.v3.exceptions import InvalidSignatureError
+from linebot.v3.messaging import Configuration, ApiClient, MessagingApi, ReplyMessageRequest, TextMessage
+from linebot.v3.webhooks import MessageEvent, TextMessageContent
+from mangum import Mangum
+
+load_dotenv()
+
+LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
+LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
+
+if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_CHANNEL_SECRET:
+    raise RuntimeError("Missing LINE credentials in environment variables.")
+
+configuration = Configuration(access_token=LINE_CHANNEL_ACCESS_TOKEN)
+handler = WebhookHandler(LINE_CHANNEL_SECRET)
+
+app = FastAPI()
+handler_lambda = Mangum(app)
+
+@app.get("/")
+async def health():
+    return {"status": "ok"}
+
+@app.post("/api/callback")
+async def callback(request: Request, x_line_signature: str = Header(None)):
+    body = await request.body()
+    body_str = body.decode("utf-8")
+
+    try:
+        handler.handle(body_str, x_line_signature)
+    except InvalidSignatureError as e:
+        logging.error(f"Signature error: {e}")
+        raise HTTPException(status_code=400, detail="Invalid signature")
+    except Exception as e:
+        logging.error(f"Webhook handle error: {e}")
+        raise HTTPException(status_code=401, detail=str(e))
+    return "OK"
+
+@handler.add(MessageEvent, message=TextMessageContent)
+def handle_message(event: MessageEvent):
+    message_text = event.message.text.strip()
+
+    if message_text == "ping":
+        reply = "pong"
+    else:
+        reply = "Send 'ping' to get 'pong' response"
+
+    # Reply
+    try:
+        with ApiClient(configuration) as api_client:
+            MessagingApi(api_client).reply_message(
+                ReplyMessageRequest(
+                    reply_token=event.reply_token,
+                    messages=[TextMessage(text=reply)]
+                )
+            )
+    except Exception as e:
+        logging.error(f"LINE reply error: {e}")
+
