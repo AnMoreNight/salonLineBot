@@ -9,8 +9,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 class RAGFAQ:
-    def __init__(self, faq_data_path: str = "api/data/faq_data.json"):
+    def __init__(self, faq_data_path: str = "api/data/faq_data.json", kb_data_path: str = "api/data/kb.json"):
         self.faq_data = self._load_faq_data(faq_data_path)
+        self.kb_data = self._load_kb_data(kb_data_path)
         self.vectorizer = TfidfVectorizer()
         self._build_search_index()
     
@@ -22,6 +23,25 @@ class RAGFAQ:
         except Exception as e:
             print(f"Error loading FAQ data: {e}")
             return []
+    
+    def _load_kb_data(self, path: str) -> Dict[str, str]:
+        """Load KB data from JSON file and convert to key-value mapping"""
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                kb_list = json.load(f)
+            
+            # Convert list of dicts to key-value mapping
+            kb_dict = {}
+            for item in kb_list:
+                key = item.get('キー', '')
+                value = item.get('例（置換値）', '')
+                if key and value:
+                    kb_dict[key] = value
+            
+            return kb_dict
+        except Exception as e:
+            print(f"Error loading KB data: {e}")
+            return {}
     
     def _build_search_index(self):
         """Build TF-IDF search index for FAQ questions"""
@@ -66,24 +86,12 @@ class RAGFAQ:
         return None
     
     def _format_answer(self, faq_item: Dict[str, Any]) -> str:
-        """Format the answer with salon-specific information"""
+        """Format the answer with actual salon information from KB data"""
         answer_template = faq_item.get('answer_template', '')
         
-        # Replace placeholders with actual salon data
-        # This would be loaded from salon configuration
-        salon_data = {
-            'SALON_NAME': 'サロンAI',
-            'ADDRESS': '東京都渋谷区...',
-            'PHONE': '03-1234-5678',
-            'ACCESS_STATION': '渋谷駅',
-            'PARKING': '近隣コインパーキングをご利用ください',
-            'HOLIDAY': '毎週火曜日',
-            'BUSINESS_HOURS_WEEKDAY': '10:00-19:00',
-            'BUSINESS_HOURS_WEEKEND': '10:00-18:00'
-        }
-        
+        # Use actual KB data for replacements
         formatted_answer = answer_template
-        for key, value in salon_data.items():
+        for key, value in self.kb_data.items():
             formatted_answer = formatted_answer.replace(f'{{{key}}}', value)
         
         return formatted_answer

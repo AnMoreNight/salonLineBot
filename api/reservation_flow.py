@@ -16,6 +16,12 @@ class ReservationFlow:
             "パーマ": {"duration": 150, "price": 12000},
             "トリートメント": {"duration": 90, "price": 5000}
         }
+        self.staff_members = {
+            "田中": {"specialty": "カット・カラー", "experience": "5年"},
+            "佐藤": {"specialty": "パーマ・トリートメント", "experience": "3年"},
+            "山田": {"specialty": "カット・カラー・パーマ", "experience": "8年"},
+            "未指定": {"specialty": "全般", "experience": "担当者決定"}
+        }
     
     def _generate_sample_slots(self) -> List[Dict[str, Any]]:
         """Generate sample available time slots"""
@@ -63,15 +69,14 @@ class ReservationFlow:
             "空いてる", "空き", "時間", "いつ", "可能"
         ]
         
-        # Service inquiry keywords (asking about services, not selecting)
-        service_inquiry_keywords = [
-            "カットについて", "カラーの料金", "パーマの効果", "トリートメントの効果",
-            "どんなサービス", "サービスについて", "髪型の相談", "美容の相談"
-        ]
-        
         # Service selection keywords (direct service names)
         service_selection_keywords = [
             "カット", "カラー", "パーマ", "トリートメント"
+        ]
+        
+        # Staff selection keywords
+        staff_selection_keywords = [
+            "田中", "佐藤", "山田", "未指定", "担当者", "美容師"
         ]
         
         # Cancel intent keywords
@@ -79,13 +84,13 @@ class ReservationFlow:
             "キャンセル", "取り消し", "予約変更", "変更"
         ]
         
-        # Priority order: reservation > service_inquiry > service_selection > cancel
+        # Priority order: reservation > service_selection > staff_selection > cancel
         if any(keyword in message_lower for keyword in reservation_keywords):
             return "reservation"
-        elif any(keyword in message_lower for keyword in service_inquiry_keywords):
-            return "service_inquiry"
         elif any(keyword in message_lower for keyword in service_selection_keywords):
             return "service_selection"
+        elif any(keyword in message_lower for keyword in staff_selection_keywords):
+            return "staff_selection"
         elif any(keyword in message_lower for keyword in cancel_keywords):
             return "cancel"
         else:
@@ -96,6 +101,11 @@ class ReservationFlow:
         if user_id not in self.user_states:
             self.user_states[user_id] = {"step": "start", "data": {}}
         
+        # Check for cancellation at any step
+        if message.lower() in ["キャンセル", "取り消し", "やめる", "中止"]:
+            del self.user_states[user_id]
+            return "予約をキャンセルいたします。またのご利用をお待ちしております。"
+        
         state = self.user_states[user_id]
         step = state["step"]
         
@@ -103,6 +113,8 @@ class ReservationFlow:
             return self._start_reservation(user_id)
         elif step == "service_selection":
             return self._handle_service_selection(user_id, message)
+        elif step == "staff_selection":
+            return self._handle_staff_selection(user_id, message)
         elif step == "date_selection":
             return self._handle_date_selection(user_id, message)
         elif step == "time_selection":
@@ -123,7 +135,9 @@ class ReservationFlow:
 ・パーマ（150分・12,000円）
 ・トリートメント（90分・5,000円）
 
-サービス名をお送りください。"""
+サービス名をお送りください。
+
+※予約をキャンセルされる場合は「キャンセル」とお送りください。"""
     
     def _handle_service_selection(self, user_id: str, message: str) -> str:
         """Handle service selection"""
@@ -151,9 +165,47 @@ class ReservationFlow:
             return "申し訳ございませんが、そのサービスは提供しておりません。上記のサービスからお選びください。"
         
         self.user_states[user_id]["data"]["service"] = selected_service
-        self.user_states[user_id]["step"] = "date_selection"
+        self.user_states[user_id]["step"] = "staff_selection"
         
         return f"""{selected_service}ですね！
+担当の美容師をお選びください。
+
+・田中（カット・カラー専門・5年経験）
+・佐藤（パーマ・トリートメント専門・3年経験）
+・山田（全般対応・8年経験）
+・未指定（担当者決定）
+
+美容師名をお送りください。
+
+※予約をキャンセルされる場合は「キャンセル」とお送りください。"""
+    
+    def _handle_staff_selection(self, user_id: str, message: str) -> str:
+        """Handle staff selection"""
+        selected_staff = None
+        message_lower = message.lower()
+        
+        # Staff matching
+        staff_mapping = {
+            "田中": "田中",
+            "佐藤": "佐藤", 
+            "山田": "山田",
+            "未指定": "未指定",
+            "担当者": "未指定",
+            "美容師": "未指定"
+        }
+        
+        for keyword, staff_name in staff_mapping.items():
+            if keyword in message_lower:
+                selected_staff = staff_name
+                break
+        
+        if not selected_staff:
+            return "申し訳ございませんが、その美容師は選択できません。上記の美容師からお選びください。"
+        
+        self.user_states[user_id]["data"]["staff"] = selected_staff
+        self.user_states[user_id]["step"] = "date_selection"
+        
+        return f"""{selected_staff}さんですね！
 ご希望の日付をお選びください。
 
 今週の空いている日：
@@ -161,7 +213,9 @@ class ReservationFlow:
 ・明後日
 ・今週の土曜日
 
-日付をお送りください。"""
+日付をお送りください。
+
+※予約をキャンセルされる場合は「キャンセル」とお送りください。"""
     
     def _handle_date_selection(self, user_id: str, message: str) -> str:
         """Handle date selection"""
@@ -191,7 +245,9 @@ class ReservationFlow:
 
 {chr(10).join([f"・{time}" for time in available_times[:5]])}
 
-ご希望の時間をお送りください。"""
+ご希望の時間をお送りください。
+
+※予約をキャンセルされる場合は「キャンセル」とお送りください。"""
     
     def _handle_time_selection(self, user_id: str, message: str) -> str:
         """Handle time selection"""
@@ -216,17 +272,21 @@ class ReservationFlow:
         self.user_states[user_id]["step"] = "confirmation"
         
         service = self.user_states[user_id]["data"]["service"]
+        staff = self.user_states[user_id]["data"]["staff"]
         service_info = self.services[service]
         
         return f"""予約内容の確認です：
 
 📅 日時：{selected_date} {selected_time}
 💇 サービス：{service}
+👨‍💼 担当者：{staff}
 ⏱️ 所要時間：{service_info['duration']}分
 💰 料金：{service_info['price']:,}円
 
 この内容で予約を確定しますか？
-「はい」または「確定」とお送りください。"""
+「はい」または「確定」とお送りください。
+
+※予約をキャンセルされる場合は「キャンセル」とお送りください。"""
     
     def _handle_confirmation(self, user_id: str, message: str) -> str:
         """Handle final confirmation"""
@@ -239,6 +299,7 @@ class ReservationFlow:
 
 📅 日時：{reservation_data['date']} {reservation_data['time']}
 💇 サービス：{reservation_data['service']}
+👨‍💼 担当者：{reservation_data['staff']}
 
 当日はお時間までにお越しください。
 ご予約ありがとうございました！"""
@@ -253,9 +314,10 @@ class ReservationFlow:
             return self.handle_reservation_flow(user_id, message)
         elif intent == "reservation_flow":
             return self.handle_reservation_flow(user_id, message)
-        elif intent == "service_inquiry":
-            return "サービスについてのご質問ですね。どのサービスについてお聞きになりたいですか？"
         elif intent == "service_selection":
+            # This should only happen during reservation flow
+            return self.handle_reservation_flow(user_id, message)
+        elif intent == "staff_selection":
             # This should only happen during reservation flow
             return self.handle_reservation_flow(user_id, message)
         elif intent == "cancel":
