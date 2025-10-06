@@ -91,7 +91,7 @@ class RAGFAQ:
             }
         
         return None
-    
+
     def _extract_kb_facts(self, faq_item: Dict[str, Any]) -> Dict[str, str]:
         """Extract KB facts from FAQ item with actual salon data"""
         answer_template = faq_item.get('answer_template', '')
@@ -103,7 +103,7 @@ class RAGFAQ:
                 kb_facts[key] = value
         
         return kb_facts
-    
+
     def get_kb_facts(self, user_message: str) -> Optional[Dict[str, Any]]:
         """
         Get KB facts only - for use by ChatGPT
