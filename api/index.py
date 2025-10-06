@@ -27,8 +27,12 @@ rag_faq = RAGFAQ()
 chatgpt_faq = ChatGPTFAQ()
 reservation_flow = ReservationFlow()
 
+# Set LINE configuration for reservation flow
+reservation_flow.set_line_configuration(configuration)
+
 app = FastAPI()
 handler_lambda = Mangum(app)
+
 
 @app.get("/")
 async def health():
@@ -63,13 +67,22 @@ def handle_message(event: MessageEvent):
         if reservation_reply:
             reply = reservation_reply
         else:
-            # 2. Try RAG-FAQ (KB-based, most accurate)
-            rag_reply = rag_faq.get_response(message_text)
-            if rag_reply and "分かりません" not in rag_reply:
-                reply = rag_reply
+            # 2. Integrated RAG-FAQ + ChatGPT workflow
+            # Step 1: Search KB for facts
+            kb_facts = rag_faq.get_kb_facts(message_text)
+            
+            if kb_facts:
+                # Step 2: Use KB facts with ChatGPT for natural language response
+                reply = chatgpt_faq.get_response(message_text, kb_facts)
+                
+                # Log successful KB hit
+                logging.info(f"KB hit for user {user_id}: {message_text} -> {kb_facts.get('category', 'unknown')}")
             else:
-                # 3. Fallback to ChatGPT for natural language responses
-                reply = chatgpt_faq.get_response(message_text)
+                # Step 3: No KB facts found - return standard "分かりません" response
+                reply = "申し訳ございませんが、その質問については分かりません。スタッフにお繋ぎします。"
+                
+                # Log KB miss for future enhancement
+                logging.warning(f"KB miss for user {user_id}: {message_text}")
 
     # Reply
     try:

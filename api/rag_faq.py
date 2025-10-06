@@ -9,8 +9,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
 class RAGFAQ:
-    def __init__(self, faq_data_path: str = "api/data/faq_data.json"):
+    def __init__(self, faq_data_path: str = "api/data/faq_data.json", kb_data_path: str = "api/data/kb.json"):
         self.faq_data = self._load_faq_data(faq_data_path)
+        self.kb_data = self._load_kb_data(kb_data_path)
         self.vectorizer = TfidfVectorizer()
         self._build_search_index()
     
@@ -22,6 +23,25 @@ class RAGFAQ:
         except Exception as e:
             print(f"Error loading FAQ data: {e}")
             return []
+    
+    def _load_kb_data(self, path: str) -> Dict[str, str]:
+        """Load KB data from JSON file and convert to key-value mapping"""
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                kb_list = json.load(f)
+            
+            # Convert list of dicts to key-value mapping
+            kb_dict = {}
+            for item in kb_list:
+                key = item.get('キー', '')
+                value = item.get('例（置換値）', '')
+                if key and value:
+                    kb_dict[key] = value
+            
+            return kb_dict
+        except Exception as e:
+            print(f"Error loading KB data: {e}")
+            return {}
     
     def _build_search_index(self):
         """Build TF-IDF search index for FAQ questions"""
@@ -39,7 +59,7 @@ class RAGFAQ:
     
     def search(self, query: str, threshold: float = 0.3) -> Optional[Dict[str, Any]]:
         """
-        Search for the best matching FAQ entry
+        Search for KB facts only - returns raw KB data, not formatted answers
         Returns None if no good match found (KB only approach)
         """
         if not self.faq_data or not hasattr(self, 'tfidf_matrix'):
@@ -57,45 +77,36 @@ class RAGFAQ:
         
         # Only return if similarity is above threshold
         if best_score >= threshold:
+            faq_item = self.faq_data[best_match_idx]
+            
+            # Extract KB facts (replace placeholders with actual data)
+            kb_facts = self._extract_kb_facts(faq_item)
+            
             return {
-                'faq_item': self.faq_data[best_match_idx],
+                'faq_item': faq_item,
                 'similarity_score': float(best_score),
-                'answer': self._format_answer(self.faq_data[best_match_idx])
+                'kb_facts': kb_facts,
+                'category': faq_item.get('category', ''),
+                'question': faq_item.get('question', '')
             }
         
         return None
     
-    def _format_answer(self, faq_item: Dict[str, Any]) -> str:
-        """Format the answer with salon-specific information"""
+    def _extract_kb_facts(self, faq_item: Dict[str, Any]) -> Dict[str, str]:
+        """Extract KB facts from FAQ item with actual salon data"""
         answer_template = faq_item.get('answer_template', '')
         
-        # Replace placeholders with actual salon data
-        # This would be loaded from salon configuration
-        salon_data = {
-            'SALON_NAME': 'サロンAI',
-            'ADDRESS': '東京都渋谷区...',
-            'PHONE': '03-1234-5678',
-            'ACCESS_STATION': '渋谷駅',
-            'PARKING': '近隣コインパーキングをご利用ください',
-            'HOLIDAY': '毎週火曜日',
-            'BUSINESS_HOURS_WEEKDAY': '10:00-19:00',
-            'BUSINESS_HOURS_WEEKEND': '10:00-18:00'
-        }
+        # Replace placeholders with actual KB data
+        kb_facts = {}
+        for key, value in self.kb_data.items():
+            if f'{{{key}}}' in answer_template:
+                kb_facts[key] = value
         
-        formatted_answer = answer_template
-        for key, value in salon_data.items():
-            formatted_answer = formatted_answer.replace(f'{{{key}}}', value)
-        
-        return formatted_answer
+        return kb_facts
     
-    def get_response(self, user_message: str) -> str:
+    def get_kb_facts(self, user_message: str) -> Optional[Dict[str, Any]]:
         """
-        Get RAG-based response
-        Returns "分かりません" if not found in KB
+        Get KB facts only - for use by ChatGPT
+        Returns None if not found in KB
         """
-        result = self.search(user_message)
-        
-        if result:
-            return result['answer']
-        else:
-            return "申し訳ございませんが、その質問については分かりません。お電話でお問い合わせください。"
+        return self.search(user_message)
